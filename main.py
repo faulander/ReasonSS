@@ -1,12 +1,20 @@
-import feedparser
-import configparser
-from dateutil import parser
-from qbittorrent import Client
+try:
+    import feedparser
+    import configparser
+    from qbittorrent import Client
+except ImportError:
+    print("Needed Modules are not installed.\n")
+    print("use:\n")
+    print("pip install feedparser\n")
+    print("pip install configparser\n")
+    print("pip install qbittorrent\n")
+
 
 wanted = list()
 completed = list()
 countWanted = int()
 countCompleted = int()
+
 config = configparser.ConfigParser()
 if len(config.read('config.txt'))==0:                           #if config file isn't found, create it
     cfgfile = open("config.txt", 'w')
@@ -60,8 +68,11 @@ for post in d.entries:
                 download=1
             if download==1:
                 print(post.title)
-                qb.download_from_link(post.link, category=config['Torrent']['category'])
-                completed.append(post.link)
+                try:
+                    qb.download_from_link(post.link, category=config['Torrent']['category'])
+                    completed.append(post.link)
+                except:
+                    print("Download could not be added to qBittorrent\n")
 
 with open(fileCompleted, "w") as foCompleted:
     for i in completed:
