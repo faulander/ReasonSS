@@ -8,7 +8,7 @@ completed = list()
 countWanted = int()
 countCompleted = int()
 config = configparser.ConfigParser()
-if len(config.read('config.txt'))==0:
+if len(config.read('config.txt'))==0:                           #if config file isn't found, create it
     cfgfile = open("config.txt", 'w')
     config.add_section('Default')
     config.add_section('Rss')
@@ -21,16 +21,16 @@ if len(config.read('config.txt'))==0:
     config.write(cfgfile)
     cfgfile.close()
 
-config.read('config.txt')
+config.read('config.txt')                                       #read config
 
-fileWanted=config['Default']['wanted']
+fileWanted=config['Default']['wanted']                          #read the searchterms for the RSS-Filter
 with open(fileWanted) as foWanted:
     for line in foWanted:
         wanted.append(line.rstrip())
         countWanted=countWanted+1
 foWanted.close()
 
-fileCompleted=config['Default']['completed']
+fileCompleted=config['Default']['completed']                    #should be overworked, file will get big!
 with open(fileCompleted) as foCompleted:
     for line in foCompleted:
         completed.append(line.rstrip())
@@ -46,7 +46,7 @@ print(qb.torrents(category=config['Torrent']['category']))
 
 for post in d.entries:
     for i in wanted:
-        if i in str.lower(post.title):          #Wenn gewünschten Imagesets gefunden werden
+        if i in str.lower(post.title):
             #print(post.title)
             download=2
             if len(completed) > 0:
@@ -60,7 +60,7 @@ for post in d.entries:
                 download=1
             if download==1:
                 print(post.title)
-                qb.download_from_link(post.link, category='P-NEW')
+                qb.download_from_link(post.link, category=config['Torrent']['category'])
                 completed.append(post.link)
 
 with open(fileCompleted, "w") as foCompleted:
