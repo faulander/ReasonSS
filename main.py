@@ -13,10 +13,10 @@ if len(config.read('config.txt'))==0:
     config.add_section('Default')
     config.add_section('Rss')
     config.add_section('Torrent')
-    config.set('Default','wanted', 'wanted.txt')
-    config.set('Default','completed', 'completed.txt')
-    config.set('Rss','rss', 'http://www.example.org/feed')
-    config.set('Torrent', 'qbclient', 'http://127.0.0.1:8080')
+    config.set('Default','wanted', 'wanted.txt')                #Every Searchterm in a line in the wanted file
+    config.set('Default','completed', 'completed.txt')          #Torrents which have been sent to qBittorrent
+    config.set('Rss','rss', 'http://www.example.org/feed')      #Feed Adress
+    config.set('Torrent', 'qbclient', 'http://127.0.0.1:8080')  #WEB-Accessfor qBittorrent must be available
     config.write(cfgfile)
     cfgfile.close()
 
