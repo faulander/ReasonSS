@@ -2,7 +2,7 @@
 Automatic Python RSS &amp; qBittorrent Downloader
 The following python modules need to be installed:
 - feedparser
-- import configparser
+- configparser
 - qbittorrent
 
 Description:
