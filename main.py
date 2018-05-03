@@ -17,6 +17,7 @@ if len(config.read('config.txt'))==0:
     config.set('Default','completed', 'completed.txt')          #Torrents which have been sent to qBittorrent
     config.set('Rss','rss', 'http://www.example.org/feed')      #Feed Adress
     config.set('Torrent', 'qbclient', 'http://127.0.0.1:8080')  #WEB-Accessfor qBittorrent must be available
+    config.set('Torrent', 'category','')                        #no category as standard
     config.write(cfgfile)
     cfgfile.close()
 
@@ -41,7 +42,7 @@ print(countCompleted, " old downloads are ignored.")
 d = feedparser.parse(config['Rss']['rss'])
 qb=Client(config['Torrent']['qbclient'])
 
-print(qb.torrents(category='P-NEW'))
+print(qb.torrents(category=config['Torrent']['category']))
 
 for post in d.entries:
     for i in wanted:
