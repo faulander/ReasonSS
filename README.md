@@ -6,7 +6,7 @@ The following python modules need to be installed:
 - qbittorrent
 
 Description:
-ReasonSS loads a list of searchterms (standard = 'wanted.txt') and checks a give RSS-Feed for this terms.
+ReasonSS loads a list of searchterms (standard = 'wanted.txt') and checks a given RSS-Feed for this terms.
 If it finds any, it sends the magnet-links to qBitorrent.
 Config can be adjusted in 'config.txt'
 
