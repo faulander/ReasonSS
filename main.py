@@ -2,16 +2,25 @@ try:
     import feedparser
     import configparser
     from qbittorrent import Client
+    import pendulum
 except ImportError:
     print("Needed Modules are not installed.\n")
     print("use:\n")
     print("pip install feedparser\n")
     print("pip install configparser\n")
     print("pip install qbittorrent\n")
+    print("pip install pendulum\n")
 
+
+def mid(s, offset, amount):
+    return s[offset-1:offset+amount-1]
+
+def left(s, amount):
+    return s[:amount]
 
 wanted = list()
 completed = list()
+completedsave = list()
 countWanted = int()
 countCompleted = int()
 Downloadlist = list()
@@ -24,7 +33,7 @@ if len(config.read('config.txt'))==0:                           #if config file 
     config.add_section('Torrent')
     config.set('Default','wanted', 'wanted.txt')                #Every Searchterm in a line in the wanted file
     config.set('Default','completed', 'completed.txt')          #Torrents which have been sent to qBittorrent
-    config.set('Default', 'purge', '1000')                      #How many old downloads should be monitored?
+    config.set('Default', 'purge', '30')                        #How old downloads should be monitored? (in days)
     config.set('Rss','rss', 'http://www.example.org/feed')      #Feed Adress
     config.set('Torrent', 'qbclient', 'http://127.0.0.1:8080')  #WEB-Access for qBittorrent must be available
     config.set('Torrent', 'category','')                        #no category as standard
@@ -40,17 +49,30 @@ category=config['Torrent']['category']
 
 with open(fileWanted) as foWanted:
     for line in foWanted:
+
         wanted.append(line.rstrip())
         countWanted=countWanted+1
 foWanted.close()
 
-fileCompleted=config['Default']['completed']                    #should be overworked, file will get big!
+fileCompleted=config['Default']['completed']
 with open(fileCompleted) as foCompleted:
     for line in foCompleted:
-        completed.append(line.rstrip())
+        sep=line.rstrip().find("|")
+        link=mid(line.rstrip(),sep+2, len(line.rstrip())-sep+2)
+        #completed.append(link)
+        #print (link)
+        completed.append(link)
+        date=pendulum.parse(left(line.rstrip(), sep))
+        today=pendulum.now()
+        purgedate=today.subtract(days=purge)
+        if date>purgedate:
+            completedsave.append(line.rstrip())
+        else:
+            print("Deleted old entry: ",line.rstrip())
         countCompleted=countCompleted+1
 
-print(countWanted, " searchterms are processed")
+print("\n\n")
+print(countWanted, "searchterms are processed")
 print(countCompleted, " old downloads are ignored.")
 print("Purge at: ", purge)
 print("Category: ", category)
@@ -75,23 +97,14 @@ for post in d.entries:                                          #check all items
             else:
                 download=1
             if download==1:
-                Downloadlist.append(post.link)
+                try:
+                    qb.download_from_link(post.link)
+                    completedsave.append(post.published + "|" + post.link)
+                    print(post.published, "|Added: ", post.title)
+                except:
+                    print("Download could not be added to qBittorrent\n")
 
-print ("new Downloads: ", len(Downloadlist))
-
-if len(Downloadlist)>0:
-    try:
-        qb.download_from_link(Downloadlist)
-        for i in Downloadlist:
-            completed.append(i)
-            print("Added: ", i)
-    except:
-        print("Download could not be added to qBittorrent\n")
-
-lines=0
 with open(fileCompleted, "w") as foCompleted:
-    for i in completed:
-        lines=lines+1
-        if lines<purge:
-            foCompleted.writelines(i + "\n")
+    for i in completedsave:
+        foCompleted.writelines(i + "\n")
 foCompleted.close()
