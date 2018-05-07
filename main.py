@@ -98,7 +98,7 @@ for post in d.entries:                                          #check all items
                 download=1
             if download==1:
                 try:
-                    qb.download_from_link(post.link)
+                    qb.download_from_link(post.link,category=category)
                     completedsave.append(post.published + "|" + post.link)
                     print(post.published, "|Added: ", post.title)
                 except:
