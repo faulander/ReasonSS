@@ -4,6 +4,7 @@ The following python modules need to be installed:
 - feedparser
 - configparser
 - qbittorrent
+- Pendulum
 
 Description:
 ReasonSS loads a list of searchterms (standard = 'wanted.txt') and checks a given RSS-Feed for this terms.
