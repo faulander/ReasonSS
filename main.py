@@ -49,7 +49,6 @@ category=config['Torrent']['category']
 
 with open(fileWanted) as foWanted:
     for line in foWanted:
-
         wanted.append(line.rstrip())
         countWanted=countWanted+1
 foWanted.close()
