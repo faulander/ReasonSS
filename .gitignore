@@ -2,3 +2,5 @@
 completed.txt
 wanted.txt
 config.txt
+*.xml
+*.iml
