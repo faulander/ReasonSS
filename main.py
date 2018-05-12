@@ -52,6 +52,8 @@ if len(config.read('config.txt'))==0:                           #if config file 
     config.set('Torrent','category','')                         #no category as standard
     config.set('Torrent','login','admin')                       #Login to qBittorrent Client
     config.set('Torrent','password','admin')                    #Password to qBittorrent Client
+    config.set('Torrent','download','no')                       #Start Downloads immediately (yes/no)
+
     config.write(cfgfile)
     cfgfile.close()
 
@@ -68,9 +70,13 @@ config.read('config.txt')                                       #read config
 purge=int(config['Default']['purge'])
 fileWanted=config['Default']['wanted']                          #read the searchterms for the RSS-Filter
 category=config['Torrent']['category']
+startdownload=config['Torrent']['download']
+
 logger.info('Purge: %s', purge)
 logger.info('Wanted List: %s', fileWanted)
 logger.info('Category: %s', category)
+logger.info('Start Download: %s', startdownload)
+
 with open(fileWanted) as foWanted:
     for line in foWanted:
         wanted.append(line.rstrip())
@@ -124,6 +130,9 @@ for post in d.entries:                                          #check all items
                     newdownloads+=1
                 except:
                     logger.critical("Download could not be added to qBittorrent\n")
+
+if newdownloads>0 and startdownload=="yes":
+    qb.resume_all()
 
 with open(fileCompleted, "w") as foCompleted:
     for i in completedsave:
