@@ -125,17 +125,16 @@ for post in d.entries:                                          #check all items
             if download==1:
                 try:
                     qb.download_from_link(post.link,category=category)
+                    if startdownload=="yes":
+                        qb.resume_all()
                     completedsave.append(post.published + "|" + post.link)
-                    logger.info(post.published, "|Added: ", post.title)
-                    newdownloads+=1
+                    tmpLogger="Added: " + left(post.title,40) + "..."
+                    logger.info(tmpLogger)
                 except:
                     logger.critical("Download could not be added to qBittorrent\n")
 
-if newdownloads>0 and startdownload=="yes":
-    qb.resume_all()
 
 with open(fileCompleted, "w") as foCompleted:
     for i in completedsave:
         foCompleted.writelines(i + "\n")
 foCompleted.close()
-logger.info("New Downloads: %i", newdownloads)

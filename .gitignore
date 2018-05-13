@@ -10,3 +10,4 @@ config.txt
 .ropeproject/objectdb
 _config.yml
 .idea/vcs.xml
+env/
