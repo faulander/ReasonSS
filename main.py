@@ -156,8 +156,7 @@ except:
     logger.debug("Feed %s", config['Rss']['rss'], " couldn't be loaded.")
     sys.exit(1)
 
-#print(qb.torrents(category=config['Torrent']['category']))
-
+newdownloads=0
 for post in d.entries:                                          #check all items from the RSS-Feed
     for i in wanted:                                            #check all searchtermins in wanted
         if i in str.lower(post.title):
@@ -180,10 +179,12 @@ for post in d.entries:                                          #check all items
                     tmpLogger="Added: " + post.title
                     logger.info(tmpLogger)
                     messaging("New Download added",tmpLogger)
+                    newdownloads+=1
                 except:
                     logger.critical("Download could not be added to qBittorrent\n")
 
-
+if newdownloads==0:
+    logger.info("No new downloads found/added.")
 with open(fileCompleted, "w") as foCompleted:
     for i in reversed(completedsave):
         foCompleted.writelines(i + "\n")
