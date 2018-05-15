@@ -5,9 +5,7 @@ config.txt
 *.xml
 *.iml
 *.xml
-.ropeproject/config.py
-.ropeproject/history
-.ropeproject/objectdb
+.ropeproject/
 _config.yml
 .idea/vcs.xml
 env/
