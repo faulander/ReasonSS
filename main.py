@@ -111,7 +111,7 @@ countCompleted = int()
 Downloadlist = list()
 newdownloads = int()
 
-logger.info('---------------------------------------------------------------------------------------')
+logger.info('------------------------------------------------------------------------------------')
 logger.info('Run at: %s', pendulum.now())
 
 config = configparser.ConfigParser()
