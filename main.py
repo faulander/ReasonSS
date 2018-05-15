@@ -1,18 +1,34 @@
+import sys
 try:
-    import sys
     import feedparser
-    import configparser
-    from qbittorrent import Client
-    import pendulum                                         #Datetime conversions
-    import logging
-
 except ImportError:
-    print("Needed Modules are not installed.\n")
-    print("use:\n")
-    print("pip install feedparser\n")
-    print("pip install configparser\n")
-    print("pip install qbittorrent\n")
-    print("pip install pendulum\n")
+    print("Needed module 'feedparser' is not installed.")
+    sys.exit(1)
+try:
+    import configparser
+except ImportError:
+    print("Needed module 'configparser' is not installed.")
+    sys.exit(1)
+try:
+    from qbittorrent import Client
+except ImportError:
+    print("Needed module 'qBittorrent' is not installed.")
+    sys.exit(1)
+try:
+    import pendulum
+except ImportError:
+    print("Needed module 'pendulum' is not installed.")
+    sys.exit(1)
+try:
+    import logging
+except ImportError:
+    print("Needed module 'logging' is not installed.")
+    sys.exit(1)
+try:
+    import apprise                                      #Notification System
+except ImportError:
+    print("Needed module 'apprise' is not installed.")
+    sys.exit(1)
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -25,6 +41,15 @@ def mid(s, offset, amount):
 def left(s, amount):
     return s[:amount]
 
+def messaging(title,body):
+    apobj = apprise.Apprise()
+    if config['Notification']['Pushover']:
+        apobj.add(config['Notification']['Pushover'])
+        apobj.notify(
+            title=title,
+            body=body,
+        )
+
 wanted = list()
 completed = list()
 completedsave = list()
@@ -34,9 +59,7 @@ Downloadlist = list()
 newdownloads = int()
 logger.info('---------------------------------------------------------------------------------------')
 
-today=pendulum.now()
-today.format('DD-MM-YYY HH:mm')
-logger.info('Run at: %s', today)
+logger.info('Run at: %s', pendulum.now())
 
 config = configparser.ConfigParser()
 if len(config.read('config.txt'))==0:                           #if config file isn't found, create it
@@ -44,9 +67,12 @@ if len(config.read('config.txt'))==0:                           #if config file 
     config.add_section('Default')
     config.add_section('Rss')
     config.add_section('Torrent')
+    config.add_section('Notification')
     config.set('Default','wanted', 'wanted.txt')                #Every Searchterm in a line in the wanted file
     config.set('Default','completed', 'completed.txt')          #Torrents which have been sent to qBittorrent
     config.set('Default', 'purge', '30')                        #How old downloads should be monitored? (in days)
+    config.set('Notification', '#Pushover', 'pover://user@token')#see more @ https://github.com/caronc/apprise
+                                                                ###other configs will follow
     config.set('Rss','rss', 'http://www.example.org/feed')      #Feed Adress
     config.set('Torrent','qbclient', 'http://127.0.0.1:8080')   #WEB-Access for qBittorrent must be available
     config.set('Torrent','category','')                         #no category as standard
@@ -77,6 +103,8 @@ logger.info('Wanted List: %s', fileWanted)
 logger.info('Category: %s', category)
 logger.info('Start Download: %s', startdownload)
 
+#messaging("Test","Test")
+
 with open(fileWanted) as foWanted:
     for line in foWanted:
         wanted.append(line.rstrip())
@@ -90,7 +118,7 @@ with open(fileCompleted) as foCompleted:
         sep=line.rstrip().find("|")
         link=mid(line.rstrip(),sep+2, len(line.rstrip())-sep+2)
         completed.append(link)
-        date=pendulum.parse(left(line.rstrip(), sep))
+        date=pendulum.parse(left(line.rstrip(), sep), strict=False)
         today=pendulum.now()
         purgedate=today.subtract(days=purge)
         if date>purgedate:
@@ -130,6 +158,7 @@ for post in d.entries:                                          #check all items
                     completedsave.append(post.published + "|" + post.link)
                     tmpLogger="Added: " + left(post.title,40) + "..."
                     logger.info(tmpLogger)
+                    messaging("New Download added",tmpLogger)
                 except:
                     logger.critical("Download could not be added to qBittorrent\n")
 
