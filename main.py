@@ -185,6 +185,6 @@ for post in d.entries:                                          #check all items
 
 
 with open(fileCompleted, "w") as foCompleted:
-    for i in completedsave:
+    for i in reversed(completedsave):
         foCompleted.writelines(i + "\n")
 foCompleted.close()
