@@ -156,7 +156,7 @@ for post in d.entries:                                          #check all items
                     if startdownload=="yes":
                         qb.resume_all()
                     completedsave.append(post.published + "|" + post.link)
-                    tmpLogger="Added: " + left(post.title,40) + "..."
+                    tmpLogger="Added: " + post.title
                     logger.info(tmpLogger)
                     messaging("New Download added",tmpLogger)
                 except:
