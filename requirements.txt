@@ -1,0 +1,7 @@
+ReasonSS
+feedparser>=5.2.1
+configparser>=3.5.0
+python-qbittorrent>=0.3.1
+pendulum>2.0.0
+logging
+apprise>=0.0.8
