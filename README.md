@@ -9,8 +9,8 @@ The following python modules need to be installed:
 
 Description:
 ReasonSS loads a list of searchterms (standard = 'wanted.txt') and checks a given RSS-Feed for this terms.
-If it finds any, it sends the magnet-links to qBitorrent.
-Config can be adjusted in 'config.txt'
+If it finds any, it sends the magnet-links to qBitorrent. Config can be adjusted in 'config.txt'
+If you need to parse non-rss feeds, take a look into Jackett: https://github.com/Jackett
 
 To-Do:
 - Feedback from qBittorrent --> Waiting for new version of qBittorrent
